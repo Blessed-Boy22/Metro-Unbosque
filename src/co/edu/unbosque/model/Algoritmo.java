@@ -1,57 +1,59 @@
 package co.edu.unbosque.model;
 
+import co.edu.unbosque.vista.Vista;
+
 public class Algoritmo {
-	static final int INFINITO=Integer.MAX_VALUE;
-	
-	public static void calcularRutaMasCorta(GeneradorRuta grafo,int salida, int[]distancia, int[]anteriores) {
-		int g=grafo.cantidadEstaciones();
-		boolean[] visitadas = new boolean[g];
-		for (int i=0;i<g;i++) {
-			distancia[i]=INFINITO;
-			anteriores[i]=-1;
-		}
-		distancia[salida]=0;
-		
-		for(int i=salida;i<g;i++) {
-			int estacionActual= obtenerEstacionNoVisitadaMinimaDistancia(salida,distancia,visitadas);
-			visitadas[estacionActual]=true;
-			
-			for(int siguienteEstacion=0;siguienteEstacion<g;siguienteEstacion++) {
-				int peso=grafo.getMatrizAdyacencia()[estacionActual][siguienteEstacion];
-				if(!visitadas[siguienteEstacion]&& peso>0){
-					int nuevaDistancia=distancia[estacionActual]+peso;
-					if(nuevaDistancia<distancia[siguienteEstacion]) {
-						distancia[siguienteEstacion]=nuevaDistancia;
-						anteriores[siguienteEstacion]=estacionActual;
-					}
-					}
-				}
-		}
-	}
-	public static Lista recuperarRutaMasCorta(int[]anteriores,int salida, int llegada) {
-		Lista ruta=new Lista();
-		int nodo=llegada;
-		while(nodo!=-1) {
-			ruta.insertarCabeza(nodo);
-			nodo=anteriores[nodo];
-		}
-		return ruta;
-	}
+    static final int INFINITO = Integer.MAX_VALUE;
 
-	private static int obtenerEstacionNoVisitadaMinimaDistancia(int salida, int[] distancia, boolean[] visitada) {
-		int minDistancia=INFINITO;
-		int nodoMinDistancia=0;
-		for(int i=0;i<distancia.length;i++) {
-			if(!visitada[i]&&distancia[i]<minDistancia) {
-				minDistancia=distancia[i];
-				nodoMinDistancia=i;
-			}
-		}
-		return nodoMinDistancia;
-	}
+    public static void calcularRutaMasCorta(GeneradorRuta grafo, int salida, int[] distancia, int[] anteriores) {
+        int g = grafo.cantidadEstaciones();
+        boolean[] visitadas = new boolean[g];
+        for (int i = 0; i < g; i++) {
+            distancia[i] = INFINITO;
+            anteriores[i] = -1;
+        }
+        distancia[salida] = 0;
 
-	public static void main(String[] args) {
-		int n=18;
+        for (int i = salida; i < g; i++) {
+            int estacionActual = obtenerEstacionNoVisitadaMinimaDistancia(salida, distancia, visitadas);
+            visitadas[estacionActual] = true;
+
+            for (int siguienteEstacion = 0; siguienteEstacion < g; siguienteEstacion++) {
+                int peso = grafo.getMatrizAdyacencia()[estacionActual][siguienteEstacion];
+                if (!visitadas[siguienteEstacion] && peso > 0) {
+                    int nuevaDistancia = distancia[estacionActual] + peso;
+                    if (nuevaDistancia < distancia[siguienteEstacion]) {
+                        distancia[siguienteEstacion] = nuevaDistancia;
+                        anteriores[siguienteEstacion] = estacionActual;
+                    }
+                }
+            }
+        }
+    }
+
+    public static Lista recuperarRutaMasCorta(int[] anteriores, int salida, int llegada) {
+        Lista ruta = new Lista();
+        int nodo = llegada;
+        while (nodo != -1) {
+            ruta.insertarCabeza(nodo);
+            nodo = anteriores[nodo];
+        }
+        return ruta;
+    }
+
+    private static int obtenerEstacionNoVisitadaMinimaDistancia(int salida, int[] distancia, boolean[] visitada) {
+        int minDistancia = INFINITO;
+        int nodoMinDistancia = 0;
+        for (int i = 0; i < distancia.length; i++) {
+            if (!visitada[i] && distancia[i] < minDistancia) {
+                minDistancia = distancia[i];
+                nodoMinDistancia = i;
+            }
+        }
+        return nodoMinDistancia;
+    }	
+    public static void main(String[] args) {
+		int n=20;
 		GeneradorRuta ruta=new GeneradorRuta(n);
 		ruta.agregarEstacion(0);
 		ruta.agregarEstacion(1);
@@ -107,6 +109,11 @@ public class Algoritmo {
 		
 		System.out.println("Distancia minima desde "+ salida + " a "+ destino +": " +distancia[destino]);
 		System.out.println("Ruta más corta: "+ rutaMasCorta);
+	
+		Vista vista = new Vista();
+        vista.mostrarDistanciaMinima(salida, destino, distancia[destino]);
+        vista.mostrarRuta(rutaMasCorta);
+        vista.mostrarMensaje("Operación completada con éxito.");
 	}
 	
 }

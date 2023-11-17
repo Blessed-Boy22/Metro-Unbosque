@@ -3,26 +3,24 @@ package co.edu.unbosque.model;
 import java.util.Iterator;
 
 public class Lista {
-	
-	private Nodo cabeza;
-	private int cantElementos;
-	public Lista() {
-		
-		cabeza=null;
-		cantElementos=0;
-	}
 
-	
-	public Lista insertarCabeza(String x) {
-		Nodo siguiente;
-		int cuenta;
-		
-		siguiente= new Nodo(x);
-		siguiente.referencia=cabeza;
-		cabeza = siguiente;
-		return this;
-	}
-	
+    private Nodo cabeza;
+    private int cantElementos;
+
+    public Lista() {
+        cabeza = null;
+        cantElementos = 0;
+    }
+
+    public Lista insertarCabeza(String x) { // Cambiado el nombre del método
+        Nodo siguiente;
+        int cuenta;
+
+        siguiente = new Nodo(x);
+        siguiente.referencia = cabeza;
+        cabeza = siguiente;
+        return this;
+    }
 	public void buscar(String x){
 		Nodo anterior, actual;
 		boolean find=false;
@@ -59,6 +57,11 @@ public class Lista {
 			actual.referencia=null;
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Lista [cabeza=" + cabeza + ", cantElementos=" + cantElementos + "]";
 	}
 }
 							

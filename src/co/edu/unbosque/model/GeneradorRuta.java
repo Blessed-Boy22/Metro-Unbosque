@@ -10,22 +10,22 @@ public class GeneradorRuta {
 		this (MAX_VERTICES);
 	}
 	
-	public GeneradorRuta(int numNodos) {
-		matrizAdyacencia = new int [numNodos][numNodos] ;
-		nodos = new Estacion[numNodos];
-		for (int i=0;1<numNodos; i++) {
-			for (int j=0; j<numNodos; j++) {
-				matrizAdyacencia[1][j]=0;
-			}
-		}
-		numEstacion = 0;
-	}
+    public GeneradorRuta(int numNodos) {
+        matrizAdyacencia = new int[numNodos][numNodos];
+        nodos = new Estacion[numNodos];
+        for (int i = 0; i < numNodos; i++) {
+            for (int j = 0; j < numNodos; j++) {
+                matrizAdyacencia[i][j] = 0; // Corregido aquí
+            }
+        }
+        numEstacion = 0;
+    }
 
 	public int numEstacion(int numNodo) {
 		Estacion e = new Estacion(numNodo);
 		boolean encontrado = false;
 		int i=0;
-		for(i=0;i<numEstacion;i++) {
+		for(i=0;i<nodos.length;i++) {
 			encontrado=nodos[i]==null?false:nodos[i].equals(e);
 			if(encontrado)
 					break;
@@ -37,7 +37,8 @@ public class GeneradorRuta {
 		if(!existe) {
 			Estacion e = new Estacion(numEs);
 			e.setNumEstacion(numEstacion);
-			nodos[numEstacion++]=e;
+			nodos[numEstacion]=e;
+			numEstacion++;
 		}
 	}
 	public void nuevoArco(int salida, int llegada, int peso) throws Exception{
