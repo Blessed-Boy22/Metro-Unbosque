@@ -25,7 +25,7 @@ public class Controller implements ActionListener{
     	 vc=new VistaConsola();
     	  sc= new Scanner(System.in);
     	 
-        generadorRuta = new AdministradorRuta(30); 
+        generadorRuta = new AdministradorRuta(20); 
   
         al= new Algoritmo();
         ejecutarAlgoritmo();
@@ -144,8 +144,8 @@ public void eliminar() {
 }
 
 public void rutaRapida() {
-	  int[] distancia = new int[30];
-	    int[] anteriores = new int[30];
+	  int[] distancia = new int[20];
+	    int[] anteriores = new int[20];
  
 System.out.println("Ingrese nombre de salida");
 String salida= sc.nextLine();

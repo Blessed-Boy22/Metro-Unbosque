@@ -3,54 +3,44 @@ package co.edu.unbosque.model;
 
 
 public class Algoritmo {
-   public int INFINITO = Integer.MAX_VALUE;
-public Algoritmo() {
-	// TODO Auto-generated constructor stub
-}
-public void calcularRutaMasCorta(AdministradorRuta grafo, int salida, int[] distancia, int[] anteriores) {
-    try {
-        int g = grafo.cantidadEstaciones();
-        boolean[] visitadas = new boolean[g];
-        for (int i = 0; i < g; i++) {
-            distancia[i] = INFINITO;
-            anteriores[i] = -1;
-        }
-        distancia[salida] = 0;
+   public static int INFINITO = Integer.MAX_VALUE;
 
-        for (int i = 0; i < g; i++) {
-        	 int estacionActual = obtenerEstacionNoVisitadaMinimaDistancia(salida, distancia, visitadas);
-            visitadas[estacionActual] = true;
+   public void calcularRutaMasCorta(AdministradorRuta grafo, int salida, int[] distancia, int[] anteriores) {
+	    try {
+	        int g = grafo.cantidadEstaciones();
+	        boolean[] visitadas = new boolean[g];
+	        for (int i = 0; i < g; i++) {
+	            distancia[i] = INFINITO;
+	            anteriores[i] = -1;
+	        }
+	        distancia[salida] = 0;
 
-            for (int siguienteEstacion = 0; siguienteEstacion < g; siguienteEstacion++) {
-                int peso = grafo.getMatrizAdyacencia()[estacionActual][siguienteEstacion];
-                if (!visitadas[siguienteEstacion] && peso > 0) {
-                    int nuevaDistancia = distancia[estacionActual] + peso;
-                    // Verificar si hay riesgo de desbordamiento antes de actualizar la distancia
-                    if (nuevaDistancia < distancia[siguienteEstacion] && nuevaDistancia >= 0) {
-                        distancia[siguienteEstacion] = nuevaDistancia;
-                        anteriores[siguienteEstacion] = estacionActual;
-                    }
-                }
-            }
-        }
-    } catch (ArrayIndexOutOfBoundsException e) {
-        // Manejar la excepción
-        System.err.println("Error: Ruta no existente");
-        e.printStackTrace();
-        // También puedes lanzar una nueva excepción personalizada si es necesario.
-        // throw new MiExcepcion("Mensaje de error personalizado", e);
-    }
-}
-  
+	        for (int i = 0; i < g; i++) {
+	            int estacionActual = obtenerEstacionNoVisitadaMinimaDistancia(salida, distancia, visitadas);
+	            visitadas[estacionActual] = true;
+
+	            for (int siguienteEstacion = 0; siguienteEstacion < g; siguienteEstacion++) {
+	                int peso = grafo.getMatrizAdyacencia()[estacionActual][siguienteEstacion];
+	                if (!visitadas[siguienteEstacion] && peso > 0) {
+	                    int nuevaDistancia = distancia[estacionActual] + peso;
+	                    // Verificar si hay riesgo de desbordamiento antes de actualizar la distancia
+	                    if (nuevaDistancia < distancia[siguienteEstacion] && nuevaDistancia >= 0) {
+	                        distancia[siguienteEstacion] = nuevaDistancia;
+	                        anteriores[siguienteEstacion] = estacionActual;
+	                    }
+	                }
+	            }
+	        }
+	    } catch (ArrayIndexOutOfBoundsException e) {
+	        // Manejar la excepción
+	        System.err.println("Error: " + e.getMessage());
+	        e.printStackTrace();
+	        
+	    }
+	}
    public Lista recuperarRutaMasCorta(int[] anteriores, int salida, int llegada) {
 	    Lista ruta = new Lista();
-
-	    // Verificar si la salida existe en el grafo
-	    if (salida < 0 || salida >= anteriores.length || anteriores[salida] == -1) {
-	        System.out.println("Error: Ruta no existente.");
-	        return ruta;
-	    }
-
+	    
 	    int nodo = llegada;
 	    while (nodo != -1) {
 	        ruta.insertarCabeza2(nodo);
@@ -66,17 +56,17 @@ public void calcularRutaMasCorta(AdministradorRuta grafo, int salida, int[] dist
 	    return ruta;
 	}
 
-    private  int obtenerEstacionNoVisitadaMinimaDistancia(int salida, int[] distancia, boolean[] visitada) {
-        int minDistancia = INFINITO;
-        int nodoMinDistancia = 0;
-        for (int i = 0; i < distancia.length; i++) {
-            if (!visitada[i] && distancia[i] < minDistancia) {
-                minDistancia = distancia[i];
-                nodoMinDistancia = i;
-            }
-        }
-        return nodoMinDistancia;
-    }	
+   private static int obtenerEstacionNoVisitadaMinimaDistancia(int salida, int[] distancia, boolean[] visitada) {
+       int minDistancia = INFINITO;
+       int nodoMinDistancia = 0;
+       for (int i = 0; i < distancia.length; i++) {
+           if (!visitada[i] && distancia[i] < minDistancia) {
+               minDistancia = distancia[i];
+               nodoMinDistancia = i;
+           }
+       }
+       return nodoMinDistancia;
+   }	
     public  void imprimirTodasLasRutasDesdeHasta(AdministradorRuta grafo, int estacionSalida, int estacionDestino) throws Exception {
         int salida = grafo.numEstacion(grafo.getNodos()[grafo.numEstacion(estacionSalida)].es.getNumEstacion());
         int destino = grafo.numEstacion(grafo.getNodos()[grafo.numEstacion(estacionDestino)].es.getNumEstacion());
