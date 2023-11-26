@@ -7,7 +7,7 @@ package co.edu.unbosque.model;
 public class Algoritmo {
 
     public static int INFINITO = Integer.MAX_VALUE;
-
+    public static String allRutas;
     /**
      * Calcula la ruta más corta desde una estación de salida hasta todas las demás
      * estaciones en el grafo.
@@ -109,19 +109,20 @@ public class Algoritmo {
      * @param estacionDestino Número de la estación de destino.
      * @throws Exception Si la estación de salida o destino no son válidas.
      */
-    public void imprimirTodasLasRutasDesdeHasta(AdministradorRuta grafo, int estacionSalida, int estacionDestino)
-            throws Exception {
-        int salida = grafo.numEstacion(grafo.getNodos()[grafo.numEstacion(estacionSalida)].es.getNumEstacion());
-        int destino = grafo.numEstacion(grafo.getNodos()[grafo.numEstacion(estacionDestino)].es.getNumEstacion());
+    public String imprimirTodasLasRutasDesdeHasta(AdministradorRuta grafo, int estacionSalida, int estacionDestino)
+			throws Exception {
+		int salida = grafo.numEstacion(grafo.getNodos()[grafo.numEstacion(estacionSalida)].es.getNumEstacion());
+		int destino = grafo.numEstacion(grafo.getNodos()[grafo.numEstacion(estacionDestino)].es.getNumEstacion());
 
-        if (salida == -1 || destino == -1) {
-            throw new Exception("Estación de salida o destino no válida");
-        }
+		if (salida == -1 || destino == -1) {
+			throw new Exception("Estación de salida o destino no válida. Verifique las estaciones proporcionadas.");
+		}
 
-        System.out.println("Rutas desde " + estacionSalida + " hasta " + estacionDestino + ":");
+		System.out.println("Rutas desde " + estacionSalida + " hasta " + estacionDestino + ":");
 
-        imprimirTodasLasRutasDFS(grafo, salida, destino, new int[grafo.cantidadEstaciones()], 0, 1);
-    }
+		return "Rutas desde " + estacionSalida + " hasta " + estacionDestino + ":" + imprimirTodasLasRutasDFS(grafo,
+				salida, destino, new int[grafo.cantidadEstaciones()], 0, 1, new boolean[grafo.cantidadEstaciones()]);
+	}
 
     /**
      * Método auxiliar para realizar una búsqueda en profundidad (DFS) e imprimir
@@ -134,32 +135,48 @@ public class Algoritmo {
      * @param longitudActual Longitud actual de la ruta.
      * @param numeroRuta     Número de la ruta actual.
      */
-    public void imprimirTodasLasRutasDFS(AdministradorRuta grafo, int estacionActual, int destino, int[] rutaActual,
-            int longitudActual, int numeroRuta) {
-        rutaActual[longitudActual] = estacionActual;
+    public String imprimirTodasLasRutasDFS(AdministradorRuta grafo, int estacionActual, int destino, int[] rutaActual,
+			int longitudActual, int numeroRuta, boolean[] visitado) {
+		rutaActual[longitudActual] = estacionActual;
+		visitado[estacionActual] = true;
 
-        if (estacionActual == destino) {
-            System.out.print("Ruta " + numeroRuta + ": ");
-            for (int i = 0; i <= longitudActual; i++) {
-                System.out.print(grafo.getNodos()[rutaActual[i]].es.getNombre());
-                if (i < longitudActual) {
-                    int estacionActualEnRuta = rutaActual[i];
-                    int estacionSiguienteEnRuta = rutaActual[i + 1];
-                    int peso = grafo.getMatrizAdyacencia()[estacionActualEnRuta][estacionSiguienteEnRuta];
-                    System.out.print(" (Distancia: " + peso + ") -> ");
-                }
-            }
-            System.out.println();
-            return;
-        }
+		allRutas = ""; // Inicializar como cadena vacía
 
-        int numEstaciones = grafo.cantidadEstaciones();
-        for (int i = 0; i < numEstaciones; i++) {
-            int peso = grafo.getMatrizAdyacencia()[estacionActual][i];
-            if (peso > 0) {
-                imprimirTodasLasRutasDFS(grafo, i, destino, rutaActual, longitudActual + 1, numeroRuta);
-            }
-        }
-    }
+		if (estacionActual == destino) {
+			System.out.print("Ruta " + numeroRuta + ": ");
+			allRutas = allRutas + "\nRuta " + numeroRuta + ": ";
+
+			for (int i = 0; i <= longitudActual; i++) {
+				System.out.print(grafo.getNodos()[rutaActual[i]].es.getNombre());
+
+				if (i < longitudActual) {
+					int estacionActualEnRuta = rutaActual[i];
+					int estacionSiguienteEnRuta = rutaActual[i + 1];
+					int peso = grafo.getMatrizAdyacencia()[estacionActualEnRuta][estacionSiguienteEnRuta];
+
+					System.out.print(" (Distancia: " + peso + ") -> ");
+					allRutas = allRutas + " (Distancia: " + peso + ") -> ";
+				}
+			}
+
+			System.out.println();
+			visitado[estacionActual] = false; // Marcar como no visitado para otras rutas
+			return allRutas;
+		}
+
+		int numEstaciones = grafo.cantidadEstaciones();
+
+		for (int i = 0; i < numEstaciones; i++) {
+			int peso = grafo.getMatrizAdyacencia()[estacionActual][i];
+
+			if (peso > 0 && !visitado[i]) {
+				allRutas = allRutas + imprimirTodasLasRutasDFS(grafo, i, destino, rutaActual, longitudActual + 1,
+						numeroRuta, visitado);
+			}
+		}
+
+		visitado[estacionActual] = false; // Marcar como no visitado para otras rutas
+		return allRutas;
+	}
 
 }
