@@ -1,84 +1,97 @@
 package co.edu.unbosque.controller;
 
-import co.edu.unbosque.model.AdministradorRuta;
 import co.edu.unbosque.model.Algoritmo;
-import co.edu.unbosque.model.Lista;
-import co.edu.unbosque.model.Nodo;
-import co.edu.unbosque.vista.VistaConsola;
+
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.Scanner;
 
-/**
- * La clase Controller controla la lógica principal de la aplicación.
- */
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import co.edu.unbosque.model.AdministradorRuta;
+import co.edu.unbosque.model.Lista;
+import co.edu.unbosque.model.Nodo;
+import co.edu.unbosque.vista.FramePrincipal;
+import co.edu.unbosque.vista.VistaConsola;
+
 public class Controller implements ActionListener {
 
 	private AdministradorRuta generadorRuta;
+
 	private Scanner sc;
 	private Algoritmo al;
 	private VistaConsola vc;
+	private FramePrincipal fp;
 
-	/**
-	 * Constructor de la clase Controller.
-	 */
 	public Controller() {
+
+		fp = new FramePrincipal();
 		vc = new VistaConsola();
 		sc = new Scanner(System.in);
+
 		generadorRuta = new AdministradorRuta(20);
+
 		al = new Algoritmo();
 		ejecutarAlgoritmo();
 		funcionar();
 
 	}
 
-	/**
-	 * Método principal que maneja las opciones del menú.
-	 */
-	public void funcionar() {
-		String menu = " 1. Agregar estacion \n 2.buscar estacion\n 3.eliminar estacion\n 4. ruta mas rapida.\n 5. todas las rutas \n 6. agregar conexiones \n 7. Editar Estacion \n  10. salir";
-		int option = 0;
-		do {
-			option = vc.ReadInteger(menu);
-			switch (option) {
-				case 1:
-					insertar();
-					break;
-				case 2:
-					buscar();
-					break;
-				case 3:
-					eliminar();
-					break;
-				case 4:
-					rutaRapida();
-					break;
-				case 5:
-					allRutas();
-					break;
-				case 6:
-					agregarConexiones();
-					break;
-				case 7:
-					editar();
-					break;
-				case 8:
-					break;
-				case 9:
-					break;
-				case 10:
-					vc.SeeInfo("gracias por entrar");
-				default:
-					vc.SeeInfo("Incorrect option,please selected diferent option");
+	private void funcionar() {
 
-			}
-
-		} while (option != 10);
+		fp.getPp().getBtn_1().addActionListener(this);
+		fp.getPp().getBtn_2().addActionListener(this);
+		fp.getPp().getBtn_3().addActionListener(this);
+		fp.getPp().getBtn_4().addActionListener(this);
+		fp.getPp().getBtn_5().addActionListener(this);
+		fp.getPp().getBtn_6().addActionListener(this);
+		fp.getPp().getBtn_7().addActionListener(this);
 
 	}
 
-	/**
-	 * Método para ejecutar el algoritmo.
-	 */
+	public void actionPerformed(ActionEvent e) {
+
+		int op = Integer.parseInt(e.getActionCommand());
+		vc.SeeInfo(op);
+
+		switch (op) {
+			case 1:
+				insertar();
+				break;
+			case 2:
+				buscar();
+				break;
+			case 3:
+				eliminar();
+				break;
+			case 4:
+				editar();
+				break;
+			case 5:
+				allRutas();
+				break;
+			case 6:
+				rutaRapida();
+				break;
+			case 7:
+				agregarConexiones();
+				break;
+			case 8:
+				break;
+			case 9:
+				break;
+			case 10:
+				vc.SeeInfo("gracias por entrar");
+			default:
+				vc.SeeInfo("Incorrect option,please selected diferent option");
+
+		}
+
+	}
+
 	public void ejecutarAlgoritmo() {
 		try {
 
@@ -122,6 +135,28 @@ public class Controller implements ActionListener {
 			generadorRuta.nuevoArco(15, 16, 2);
 			generadorRuta.nuevoArco(15, 17, 2);
 			generadorRuta.nuevoArco(17, 18, 2);
+			generadorRuta.nuevoArco(1, 0, 2);
+			generadorRuta.nuevoArco(2, 1, 2);
+			generadorRuta.nuevoArco(3, 1, 1);
+			generadorRuta.nuevoArco(4, 2, 1);
+			generadorRuta.nuevoArco(6, 4, 5);
+			generadorRuta.nuevoArco(5, 3, 14);
+			generadorRuta.nuevoArco(7, 5, 2);
+			generadorRuta.nuevoArco(8, 5, 2);
+			generadorRuta.nuevoArco(7, 6, 1);
+			generadorRuta.nuevoArco(10, 6, 2);
+			generadorRuta.nuevoArco(9, 6, 2);
+			generadorRuta.nuevoArco(12, 7, 1);
+			generadorRuta.nuevoArco(11, 8, 1);
+			generadorRuta.nuevoArco(14, 9, 2);
+			generadorRuta.nuevoArco(15, 10, 2);
+			generadorRuta.nuevoArco(13, 11, 2);
+			generadorRuta.nuevoArco(12, 11, 6);
+			generadorRuta.nuevoArco(15, 12, 2);
+			generadorRuta.nuevoArco(16, 15, 2);
+			generadorRuta.nuevoArco(17, 15, 2);
+			generadorRuta.nuevoArco(18, 17, 2);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -129,118 +164,219 @@ public class Controller implements ActionListener {
 
 	}
 
-	/**
-	 * Método para insertar una estación en el grafo.
-	 */
 	public void insertar() {
-		System.out.println("Ingrese nombre de estacion:");
-		String nombre = sc.nextLine();
 
-		generadorRuta.agregarEstacion(nombre);
+		try {
+			String nombre = JOptionPane.showInputDialog(null, "Ingrese nombre de estacion:", "Agregar",
+					JOptionPane.QUESTION_MESSAGE);
+
+			if (nombre != null && !nombre.isEmpty()) {
+				generadorRuta.agregarEstacion(nombre);
+				JOptionPane.showMessageDialog(null, "Estación agregada exitosamente", "Éxito",
+						JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(null, "El nombre de la estación no puede estar vacío", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ocurrió un error al agregar la estación", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
-	/**
-	 * Método para buscar una estación en el grafo.
-	 */
 	public void buscar() {
-		System.out.println("ingrese el nombre de la estacion");
-		String nombre = sc.nextLine();
-		generadorRuta.buscarEstacion(nombre);
+
+		try {
+			String nombre = JOptionPane.showInputDialog(null, "Ingrese nombre de estacion:", "Buscar",
+					JOptionPane.QUESTION_MESSAGE);
+
+			if (nombre != null && !nombre.isEmpty()) {
+				generadorRuta.buscarEstacion(nombre);
+
+			} else {
+				JOptionPane.showMessageDialog(null, "El nombre de la estación no puede estar vacío", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ocurrió un error al agregar la estación", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+
 	}
 
-	/**
-	 * Método para eliminar una estación del grafo.
-	 */
 	public void eliminar() {
-		System.out.println("ingrese el nombre de la estacion a eliminar");
-		String nombre = sc.nextLine();
-		generadorRuta.eliminar(nombre);
+
+		try {
+			String nombre = JOptionPane.showInputDialog(null, "ingrese el nombre de la estacion a eliminar", "Buscar",
+					JOptionPane.QUESTION_MESSAGE);
+
+			if (nombre != null && !nombre.isEmpty()) {
+				generadorRuta.eliminar(nombre);
+
+			} else {
+				JOptionPane.showMessageDialog(null, "El nombre de la estación no puede estar vacío", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ocurrió un error al agregar la estación", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+
 	}
 
-	/**
-	 * Método para encontrar la ruta más rápida entre dos estaciones.
-	 */
 	public void rutaRapida() {
 		int[] distancia = new int[20];
 		int[] anteriores = new int[20];
-		System.out.println("Ingrese nombre de salida");
-		String salida = sc.nextLine();
-		int salidaint = generadorRuta.buscar(salida);
-		System.out.println("Ingrese nombre de la llegada");
-		String llegada = sc.nextLine();
-		int llegadaint = generadorRuta.buscar(llegada);
-		al.calcularRutaMasCorta(generadorRuta, salidaint, distancia, anteriores);
-		Lista rutaMasCorta = al.recuperarRutaMasCorta(anteriores, salidaint, llegadaint);
 
-		Nodo actual = rutaMasCorta.getCabeza();
-		while (actual != null) {
-			System.out.print(generadorRuta.getNodos()[actual.getDatos()].getEs().getNombre());
+		try {
+			String salida = JOptionPane.showInputDialog(null, "Ingrese nombre de salida", "Ruta rápida",
+					JOptionPane.QUESTION_MESSAGE);
 
-			if (actual.getReferencia() != null) {
-				int estacionActual = actual.getDatos();
-				int estacionSiguiente = actual.getReferencia().getDatos();
-				int peso = generadorRuta.getMatrizAdyacencia()[estacionActual][estacionSiguiente];
+			if (salida != null && !salida.isEmpty()) {
+				int salidaint = generadorRuta.buscar(salida);
 
-				System.out.print(" (Distancia: " + peso + ") -> ");
+				String llegada = JOptionPane.showInputDialog(null, "Ingrese nombre de la llegada", "Ruta rápida",
+						JOptionPane.QUESTION_MESSAGE);
+
+				if (llegada != null && !llegada.isEmpty()) {
+					int llegadaint = generadorRuta.buscar(llegada);
+
+					// Calcular la ruta más corta
+					al.calcularRutaMasCorta(generadorRuta, salidaint, distancia, anteriores);
+
+					// Recuperar la ruta más corta
+					Lista rutaMasCorta = al.recuperarRutaMasCorta(anteriores, salidaint, llegadaint);
+
+					if (rutaMasCorta != null) {
+						Nodo actual = rutaMasCorta.getCabeza();
+
+						while (actual != null) {
+							int estacionActual = actual.getDatos();
+							JOptionPane.showMessageDialog(null,
+									generadorRuta.getNodos()[estacionActual].getEs().getNombre(), "Éxito",
+									JOptionPane.INFORMATION_MESSAGE);
+
+							if (actual.getReferencia() != null) {
+								int estacionSiguiente = actual.getReferencia().getDatos();
+								int peso = generadorRuta.getMatrizAdyacencia()[estacionActual][estacionSiguiente];
+
+								JOptionPane.showMessageDialog(null, " (Distancia: " + peso + " km) -> ", "Éxito",
+										JOptionPane.INFORMATION_MESSAGE);
+							}
+
+							actual = actual.getReferencia();
+						}
+					} else {
+						JOptionPane.showMessageDialog(null,
+								"No hay una ruta disponible entre las estaciones seleccionadas", "Ruta no encontrada",
+								JOptionPane.INFORMATION_MESSAGE);
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "El nombre de la estación de llegada no puede estar vacío",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "El nombre de la estación de salida no puede estar vacío", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
-
-			actual = actual.getReferencia();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ocurrió un error al calcular la ruta más corta", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
+
 	}
 
-	/**
-	 * Método para imprimir todas las rutas entre dos estaciones.
-	 */
 	public void allRutas() {
 		try {
-			System.out.println("Ingrese nombre de salida");
-			String salida = sc.nextLine();
-			int salidaint = generadorRuta.buscar(salida);
-			System.out.println("Ingrese nombre de la llegada");
-			String llegada = sc.nextLine();
-			int llegadaint = generadorRuta.buscar(llegada);
-			al.imprimirTodasLasRutasDesdeHasta(generadorRuta, salidaint, llegadaint);
+			String salida = JOptionPane.showInputDialog(null, "Ingresar nombre de salida:", "Rutas",
+					JOptionPane.QUESTION_MESSAGE);
+
+			if (salida != null && !salida.isEmpty()) {
+				try {
+					int salidaint = generadorRuta.buscar(salida);
+					String llegada = JOptionPane.showInputDialog(null, "Ingrese nombre de  llegada:", "Conexiones",
+							JOptionPane.QUESTION_MESSAGE);
+					int llegadaint = generadorRuta.buscar(llegada);
+					String allrutas = al.imprimirTodasLasRutasDesdeHasta(generadorRuta, salidaint, llegadaint);
+
+					System.out.println(allrutas);
+
+					JTextArea textArea = new JTextArea(10, 30);
+					textArea.setText(allrutas);
+					JScrollPane scrollPane = new JScrollPane(textArea);
+					JOptionPane.showMessageDialog(null, scrollPane, "Rutas", JOptionPane.INFORMATION_MESSAGE);
+
+				} catch (Exception e) {
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "El nombre de la estación no puede estar vacío", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		} catch (Exception e) {
-			System.out.println("ocurrio un error");
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ocurrió un error al agregar la estación", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
+
 	}
 
-	/**
-	 * Método para agregar conexiones entre estaciones.
-	 */
 	public void agregarConexiones() {
 		try {
-			System.out.println("Ingresar ruta de salida");
-			String salida = sc.nextLine();
-			int salidaint = generadorRuta.buscar(salida);
-			System.out.println("Ingrese ruta de  llegada");
-			String llegada = sc.nextLine();
-			int llegadaint = generadorRuta.buscar(llegada);
+			String salida = JOptionPane.showInputDialog(null, "Ingresar ruta de salida:", "Conexiones",
+					JOptionPane.QUESTION_MESSAGE);
 
-			int distancia = vc.ReadInteger("ingrese distancia en km");
-			generadorRuta.nuevoArco(salidaint, llegadaint, distancia);
+			if (salida != null && !salida.isEmpty()) {
+				try {
+					int salidaint = generadorRuta.buscar(salida);
+					String salida1 = JOptionPane.showInputDialog(null, "Ingrese ruta de  llegada:", "Conexiones",
+							JOptionPane.QUESTION_MESSAGE);
+					int llegadaint = generadorRuta.buscar(salida1);
+					int distancia = Integer.parseInt(JOptionPane.showInputDialog(null, "Ingrese distancia en Km:",
+							"Conexiones", JOptionPane.QUESTION_MESSAGE));
+
+					generadorRuta.nuevoArco(salidaint, llegadaint, distancia);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(null, "Ocurrió un error!", "Error", JOptionPane.ERROR_MESSAGE);
+
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "El nombre de la estación no puede estar vacío", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		} catch (Exception e) {
-			System.out.println("ocurrio un error");
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ocurrió un error al agregar la estación", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
+
 	}
 
-	/**
-	 * Método para editar el nombre de una estación.
-	 */
 	public void editar() {
-		System.out.println("Ingrese el nombre de la estacion");
-		String nombre1 = sc.nextLine();
-		System.out.println("Ingrese el nuevo nombre de la estacion");
-		String nombre2 = sc.nextLine();
-		generadorRuta.editarEstacionNombre(nombre1, nombre2);
+
+		try {
+			String nombre1 = JOptionPane.showInputDialog(null, "Ingrese el nombre de la estacion:", "Editar",
+					JOptionPane.QUESTION_MESSAGE);
+
+			if (nombre1 != null && !nombre1.isEmpty()) {
+				String nombre2 = JOptionPane.showInputDialog(null, "Ingrese el nuevo nombre:", "Editar",
+						JOptionPane.QUESTION_MESSAGE);
+
+				generadorRuta.editarEstacionNombre(nombre1, nombre2);
+
+			} else {
+				JOptionPane.showMessageDialog(null, "El nombre de la estación no puede estar vacío", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Ocurrió un error al agregar la estación", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+
 	}
 
-	/**
-	 * Maneja eventos de acción.
-	 *
-	 * @param e Objeto de evento de acción.
-	 */
-	public void actionPerformed(ActionEvent e) {
-
-	}
 }
