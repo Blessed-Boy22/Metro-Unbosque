@@ -128,7 +128,7 @@ public class AdministradorRuta {
 		for (int i = 0; i < numEstacion; i++) {
 			if (nodos[i] != null && nodos[i].es.nombre.equalsIgnoreCase(nombre)) {
 				Estacion estacion = nodos[i].es;
-				System.out.println("Nombre: " + estacion.getNombre() + ", Número: " + estacion.getNumEstacion());
+				
 				return "Nombre: " + estacion.getNombre() + ", Número: " + estacion.getNumEstacion();
 				// Puedes agregar otros detalles de la estación según tus necesidades
 			}
@@ -142,22 +142,25 @@ public class AdministradorRuta {
 	 * @param nombreAntiguo Nombre antiguo de la estación.
 	 * @param nuevoNombre   Nuevo nombre de la estación.
 	 */
-	public void editarEstacionNombre(String nombreAntiguo, String nuevoNombre) {
-		int indiceEstacion = buscar(nombreAntiguo);
-		if (indiceEstacion != -1) {
-			// Guarda el número de estación antes de la edición
-			int numEstacionAntiguo = nodos[indiceEstacion].es.getNumEstacion();
+	public String editarEstacionNombre(String nombreAntiguo, String nuevoNombre) {
+	    int indiceEstacion = buscar(nombreAntiguo);
 
-			// Actualiza el nombre
-			nodos[indiceEstacion].es.setNombre(nuevoNombre);
+	    if (indiceEstacion != -1) {
+	        // Guarda el número de estación antes de la edición
+	        int numEstacionAntiguo = nodos[indiceEstacion].es.getNumEstacion();
 
-			// Si el número de estación cambió, vuelve a asignar el número anterior
-			if (numEstacionAntiguo != nodos[indiceEstacion].es.getNumEstacion()) {
-				nodos[indiceEstacion].es.setNumEstacion(numEstacionAntiguo);
-			}
-		} else {
-			System.out.println("La estación " + nombreAntiguo + " no se encontró.");
-		}
+	        // Actualiza el nombre
+	        nodos[indiceEstacion].es.setNombre(nuevoNombre);
+
+	        // Si el número de estación cambió, vuelve a asignar el número anterior
+	        if (numEstacionAntiguo != nodos[indiceEstacion].es.getNumEstacion()) {
+	            nodos[indiceEstacion].es.setNumEstacion(numEstacionAntiguo);
+	        }
+
+	        return "Estación editada con éxito: " + nuevoNombre;
+	    } else {
+	        return "No se encontró la estación con el nombre proporcionado: " + nombreAntiguo;
+	    }
 	}
 
 	/**
@@ -165,17 +168,19 @@ public class AdministradorRuta {
 	 *
 	 * @param nombre Nombre de la estación a eliminar.
 	 */
-	public void eliminar(String nombre) {
-		int indiceEstacion = buscar(nombre);
-		if (indiceEstacion != -1) {
-			for (int i = indiceEstacion; i < numEstacion - 1; i++) {
-				nodos[i] = nodos[i + 1];
-			}
-			nodos[numEstacion - 1] = null;
-			numEstacion--;
-		} else {
-			System.out.println("La estación " + nombre + " no se encontró.");
-		}
+	public String eliminar(String nombre) {
+	    int indiceEstacion = buscar(nombre);
+	    if (indiceEstacion != -1) {
+	        for (int i = indiceEstacion; i < numEstacion - 1; i++) {
+	            nodos[i] = nodos[i + 1];
+	        }
+	        nodos[numEstacion - 1] = null;
+	        numEstacion--;
+
+	        return "Estación eliminada con éxito: " + nombre;
+	    } else {
+	        return "No se encontró la estación con el nombre proporcionado: " + nombre;
+	    }
 	}
 
 	/**

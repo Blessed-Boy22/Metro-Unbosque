@@ -7,12 +7,12 @@ public class Lista {
 
 	private Nodo cabeza;
 	private int cantElementos;
-	private Estacion es;
+	
 
 	public Lista() {
 		cabeza = null;
 		cantElementos = 0;
-		es = es;
+	
 	}
 
 	/**
